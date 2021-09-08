@@ -39,13 +39,13 @@
 
 
 body{
-	background-color:aqua;
+	background-color:lightgray;
 }
 
 #cancel
 {
 	float: right;
-	margin-right: 30px;
+	margin-right: 40px;
 	border-radius: 10px;
 }
 
@@ -60,13 +60,15 @@ body{
 {
 	float: right;
 	margin-right: 60px;
+	margin-top: 80px;
 	border-radius: 10px;
 }
 
 #logout
 {
 	float: right;
-	margin-right: 20px;
+	margin-right: 80px;
+	margin-top: 80px;
 	border-radius: 10px;
 }
 
@@ -98,35 +100,33 @@ body{
 	border-radius: 5px;
 }
 
-.card{
+#card{
 	padding-left: 14px;
 	width: 90%;
 	height: 100%;
 	padding-top: 9px;
 	margin-left: 57px;
 	margin-top: 100px;
-	background: gray;
-	border: 5px blueviolet;
-	border-radius: 17px;
-
+	border-radius: 30px;
+	background-color: lightskyblue;
 }
 
-.index{
-	width: 40px;
-    height: 20px;
-    background-color: lightblue;
-    text-align:center;
+#index{
+    background-color:darkgrey;
     float: left;
+	width: 30px;
+	height: 40px;
+	border-radius: 50%;
+	padding-left: 20px;
+	padding-top: 12px;
+	margin-top: 15px;
+	margin-right: 10px;
 }
 
-#edit{
+#action{
 	float: right;
 	padding-right: 20px;
 	padding-left: 10px;
 }
 
-#delete{
-	float: right;
-	padding-right: 20px;
-	padding-left: 10px;
-}
+

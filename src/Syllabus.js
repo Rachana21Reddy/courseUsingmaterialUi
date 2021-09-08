@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from "react-router-dom";
 import Axios from './Header';
-import { TextField, Button }from '@material-ui/core';
-// import Autocomplete from '@material-ui/lab/Autocomplete';
+import { TextField, Button, Card, CardActions, Chip }from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
+const objectivesList = [];
 const SyllabusForm = props => {
   const [syllabusTitle, setTitle] = useState(props.syllabusData.syllabusTitle);
   const [description, setDescription] = useState(props.syllabusData.description);
-  const [objectives, setObjectives] = useState(props.syllabusData.objectives);
+  const [objectives, setObjectives] = useState([...objectivesList,props.syllabusData.objectives]);
+  const [titleError, setTitleError] = useState(false);
+  const [descriptionError, setDescriptionError] = useState(false);
+  const [objectivesError, setObjectivesError] = useState(false);
 
   const handleChange = event => {
     if(event.target.name === "syllabusTitle") setTitle(event.target.value);
     if(event.target.name === "description") setDescription(event.target.value);
-    if(event.target.name === "objectives") setObjectives(event.target.value);
+    if(event.target.name === "objectives") {
+      setObjectives(
+        ...objectivesList,
+        event.target.value
+      );
+    }
   }
 
   const syllabus={
@@ -22,6 +31,18 @@ const SyllabusForm = props => {
   };
 
   const handleSave = () =>{
+    setTitleError(false);
+    setDescriptionError(false);
+    setObjectivesError(false);
+    if(syllabusTitle === "") {
+      setTitleError(true);
+    }
+    if(description === "") {
+      setDescriptionError(true);
+    }
+    if(objectives === "") {
+      setObjectivesError(true);
+    }
     const index = props.index;
     const updateMode = props.syllabusData.updateMode;
     props.onSave(index, syllabus, updateMode); 
@@ -30,40 +51,61 @@ const SyllabusForm = props => {
 
   return(
     <>
-    <TextField required id="outlined-basic" name="syllabusTitle" label="syllabusTitle" variant="outlined" value={syllabusTitle} onChange={handleChange} fullWidth />
-    <TextField required id="outlined-basic" name="description" label="description" variant="outlined" value={description} onChange={handleChange} fullWidth/>
-    <TextField required id="outlined-basic" name="objectives" label="objective" value={objectives} onChange={handleChange} variant="outlined"fullWidth />
-    <Button variant="contained" color="primary" onClick={handleSave}>Save</Button>
-    <Button variant="contained" color="primary" onClick={handleCancel}>Cancel</Button>
-    {/* <br></br><strong>{props.index+1}</strong><br></br>
-    <label>syllabus Title</label>
-    <input type="text" name="syllabusTitle" id="syllabusTitle" value={syllabusTitle} onChange={handleChange}></input>
     <br></br>
-    <label>Description</label>
-    <input type="text" name="description" id="description" value={description} onChange={handleChange}></input>
-    <br></br>
-    <label>objectives</label>
-    <input type="text" name="objectives" id="objectives" value={objectives} onChange={handleChange}></input>
-    <br></br>
-    <button onClick={handleSave} id="save">save</button>
-    <button onClick={handleCancel} id="cancel">cancel</button>
-    <br></br> */}
+    <TextField required id="outlined-basic" name="syllabusTitle" label="syllabusTitle" variant="outlined"  value={syllabusTitle}  onChange={handleChange} error={titleError} helperText={titleError === true ? "Title is Required" : " "} fullWidth />
+    <TextField required id="outlined-basic" name="description" label="description" variant="outlined" value={description} onChange={handleChange}  error={descriptionError} helperText={descriptionError === true ? "Description is Required" : " "} fullWidth/>
+    <Autocomplete
+        multiple
+        id="tags-filled"
+        options={objectivesList.map((option) => option)}
+        defaultValue={objectives}
+        onChange={handleChange}
+        freeSolo
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <Chip
+              variant="outlined"
+              label={option}
+              {...getTagProps({ index })}
+            />
+          ))
+        }
+        // multiple
+        // id="tags-filled"
+        // options={objectivesList.map((option) => option)}
+        // defaultValue={objectives}
+        // freeSolo
+        // renderTags={(value, getTagProps) =>
+        //   value.map((option, index) => (
+        //     <Chip
+        //       variant="outlined"
+        //       label={option}
+        //       {...getTagProps({ index })}
+        //     />
+        //   ))
+        // }
+      renderInput={(params) => (<TextField {...params} required id="outlined-basic" name="objectives" label="objectives" error={objectivesError} helperText={objectivesError === true ? "Objectives Required" : " "} value={params.value} variant="outlined" fullWidth />)}
+    />
+    <Button variant="outlined" color="primary" onClick={handleSave} id="save">Save</Button>
+    <Button variant="outlined" color="primary" onClick={handleCancel} id="cancel">Cancel</Button>
     </>
-  );
+  );  
 }
 
 const SyllabusCard = props => {
   const editsyllabus = () => props.edit(props.index);
   const deletesyllabus = () => props.delete(props.index);
   return (
-    <div className="card">
-      <br></br><label className="index">{props.index+1}</label><br></br>
-      <label>syllabusTitle:{props.syllabusData.syllabusTitle}</label><br></br>
-      <label>Description:{props.syllabusData.description}</label><br></br>
-      <label>objectives:{props.syllabusData.objectives}</label><br></br>
-      <button onClick={editsyllabus} id="edit">Edit</button>
-      <button onClick={deletesyllabus} id="delete">Delete</button><br></br>
-    </div>
+      <Card id="card" variant="outlined">
+        <br></br><label id="index"><strong>{props.index+1}</strong></label><br></br>
+        <label>syllabusTitle:{props.syllabusData.syllabusTitle}</label><br></br>
+        <label>Description:{props.syllabusData.description}</label><br></br>
+        <label>objectives:{props.syllabusData.objectives}</label><br></br>
+      <CardActions id="action">
+        <Button onClick={editsyllabus} id="edit" variant="outlined"  color="primary">Edit</Button>
+        <Button onClick={deletesyllabus} id="delete" variant="outlined"  color="primary">Delete</Button>
+      </CardActions>
+    </Card>
   );
 }
 
@@ -75,7 +117,7 @@ function Syllabus() {
     syllabusItemsClone.push({
       syllabusTitle: "",
       description: "",
-      objectives: "",
+      objectives: [],
       editMode: true,
       updateMode: false
     });
@@ -103,7 +145,7 @@ const save = (index, syllabus, updateMode) => {
     syllabusItemsClone[index] = syllabus;
     console.log(syllabusItemsClone);
     if(!updateMode) {
-        Axios.post(
+        Axios.post("http://localhost:4000/api/syllabus",
           {
             "syllabusTitle":syllabus.syllabusTitle,
             "description":syllabus.description,
@@ -170,8 +212,10 @@ const save = (index, syllabus, updateMode) => {
   
   return (
     <div>
-      <button onClick={logout} id="logout">Logout</button>
-      <button onClick={DisplayForm} id="syllabusBtn">Add syllabus</button>
+      <Button onClick={logout} id="logout" variant="outlined"  color="primary">Logout</Button>
+      <Button onClick={DisplayForm} id="syllabusBtn" variant="outlined"  color="primary">Add syllabus</Button>
+      <br></br>
+      <br></br>
       {syllabusItems.map((syllabusItem, index) => {
         return((syllabusItem.editMode === true ? 
           (<SyllabusForm key={`SyllabusForm-${index}`} syllabusData={syllabusItem} index={index} onSave={save} onCancel={cancel}></SyllabusForm>)
